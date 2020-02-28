@@ -26,17 +26,38 @@ class ZulawCounter():
         for card in self.list_of_cards:
             self.read_single_card(card)
 
+    def clean_spaces(self, splitted_line):
+        for i in range(len(splitted_line)):
+            splitted_line[i] = ' '.join(splitted_line[i].strip().split())
+        return splitted_line
+
+    def clean_author(self, author):
+        for i in range(len(author)):
+            if author[i] == '.' and author[i+1] != ' ':
+                author = author[:(i+1)] + ' ' + author[(i+1):]
+        author = author.lower().title()
+        return author
+
+    def clean_title(self, title):
+        return title.lower().capitalize()
+
+    def read_line(self, line):
+        splitted_line = line.split('\t')
+        splitted_line = self.clean_spaces(splitted_line)
+        author = self.clean_author(splitted_line[0])
+        title = self.clean_title(splitted_line[1])
+        novel = f'{author} - {title}'
+        points = int(splitted_line[2])
+
+        return (novel, points)
+
     def read_single_card(self, card):
         with open(card, 'r', encoding='utf-8') as f:
             for line in f:
                 if line != "\n":
                     if line[-1] == '\n':
                         line = line[:-1]
-                    splitted = line.split('\t')
-                    for i in range(len(splitted)):
-                        splitted[i] = splitted[i].strip()
-                    novel = f'{splitted[0]} - "{splitted[1].lower().capitalize}"'
-                    points = int(splitted[2])
+                    novel, points = self.read_line(line)
                     self.write_to_summary(novel,points)
 
     def write_to_summary(self, novel, points):
