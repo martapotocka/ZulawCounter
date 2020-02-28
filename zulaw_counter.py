@@ -35,7 +35,7 @@ class ZulawCounter():
                     splitted = line.split('\t')
                     for i in range(len(splitted)):
                         splitted[i] = splitted[i].strip()
-                    novel = f'{splitted[0]} - "{splitted[1]}"'
+                    novel = f'{splitted[0]} - "{splitted[1].lower().capitalize}"'
                     points = int(splitted[2])
                     self.write_to_summary(novel,points)
 
