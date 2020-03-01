@@ -1,0 +1,1 @@
+Tu wpisac w jakim formacie maja byc karty elektorów i jak nazwana ma byc lista "lista.txt"
