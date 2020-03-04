@@ -3,7 +3,8 @@
 import os
 import pathlib
 
-FILES_TO_IGNORE = ["Podsumowanie wyników.txt", "lista.txt", 'README.txt']
+ACCEPTED_NOVELS = "lista.txt"
+FILES_TO_IGNORE = ["Podsumowanie wyników.txt", ACCEPTED_NOVELS, 'README.txt']
 
 
 class ZulawCounter():
@@ -13,22 +14,26 @@ class ZulawCounter():
         self.list_of_cards = list()
         self.points_summary = dict()
         self.sorted_points_summary = dict()
-        self.list_of_novels = list()
+        self.list_of_accepted_novels = list()
 
-    def handle_list_of_novels(self):
-        for f in os.listdir(self.current_dir):
-            if f == "lista.txt":
-                self.read_list(f)
-                break
-        print('Nie znaleziono pliku "lista.txt" zawierającego listę zgłoszeniową powieści.')
-        decision = input('Czy chcesz [p]rzerwać działanie programu, czy [k]ontynuować? Naciśnij "p" lub "k" i Enter. ')
-        if decision == 'p':
-            quit()
+    def handle_list_of_accepted_novels(self):
+        if os.path.isfile(ACCEPTED_NOVELS):
+            self.read_list_of_acceptd_novels(ACCEPTED_NOVELS)
+        else:
+            print(f'\nNie znaleziono pliku "{ACCEPTED_NOVELS}" zawierającego listę zgłoszeniową powieści.')
+            while True:
+                decision = input('Czy chcesz [p]rzerwać działanie programu, czy [k]ontynuować? Naciśnij "p" lub "k" i Enter. ')
+                if decision == 'k':
+                    break
+                elif decision =='p':
+                    quit()
+                else:
+                    continue
 
-    def read_list(self, list_file):
+    def read_list_of_acceptd_novels(self, list_file):
         with open(list_file, 'r', encoding='utf-8') as f:
-            for line in 
-
+            for line in f:
+                self.list_of_accepted_novels.append(line[:-1].lower())
 
     def create_list_of_cards(self):
         for f in os.listdir(self.current_dir):
@@ -59,15 +64,20 @@ class ZulawCounter():
     def clean_title(self, title):
         return title.lower().capitalize()
 
-    def check_title_against_list(self, title):
-        pass
+    def check_title_against_list_of_accepted_novels(self, title, card):
+        if self.list_of_accepted_novels:
+            if title.lower() not in self.list_of_accepted_novels:
+                print(f'\nPowieść "{title}" z karty do głosowania: {card} nie znajduje się na liście zgłoszeniowej (w pliku {ACCEPTED_NOVELS}).')
+                print("Program zostanie zamknięty.")
+                print(f'Zanim ponownie go uruchomisz dodaj powieść "{title}" do listy zgłoszeniowej, lub usuń ją z karty do głosowania: {card}.')
+                quit()
 
-    def read_line(self, line):
+    def read_line(self, line, card):
         splitted_line = line.split('\t')
         splitted_line = self.clean_spaces(splitted_line)
         author = self.clean_author(splitted_line[0])
         title = self.clean_title(splitted_line[1])
-        self.check_title_against_list(title)
+        self.check_title_against_list_of_accepted_novels(title, card)
         novel = f'{author} - {title}'
         points = int(splitted_line[2])
         return (novel, points)
@@ -78,7 +88,7 @@ class ZulawCounter():
                 if line != "\n":
                     if line[-1] == '\n':
                         line = line[:-1]
-                    novel, points = self.read_line(line)
+                    novel, points = self.read_line(line, card)
                     self.write_to_summary(novel,points)
 
     def write_to_summary(self, novel, points):
@@ -104,7 +114,7 @@ class ZulawCounter():
     def run(self):
         print("*** Witaj w programie ŻuławCounter ***")
 
-        self.handle_list_of_novels()
+        self.handle_list_of_accepted_novels()
         self.create_list_of_cards()
         self.print_list_of_cards()
         self.read_cards()
