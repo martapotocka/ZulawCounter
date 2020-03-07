@@ -1,6 +1,7 @@
 """ Autor - Marta Potocka - marta.m.potocka@gmail.com """
 
 import os
+import sys
 import pathlib
 
 ACCEPTED_NOVELS = "lista.txt"
@@ -26,7 +27,7 @@ class ZulawCounter():
                 if decision == 'k':
                     break
                 elif decision =='p':
-                    quit()
+                    sys.exit()
                 else:
                     continue
 
@@ -70,7 +71,8 @@ class ZulawCounter():
                 print(f'\nPowieść "{title}" z karty do głosowania: {card} nie znajduje się na liście zgłoszeniowej (w pliku {ACCEPTED_NOVELS}).')
                 print("Program zostanie zamknięty.")
                 print(f'Zanim ponownie go uruchomisz dodaj powieść "{title}" do listy zgłoszeniowej, lub usuń ją z karty do głosowania: {card}.')
-                quit()
+                input('Nacisnij Enter aby zamknąć program.')
+                sys.exit()
 
     def read_line(self, line, card):
         splitted_line = line.split('\t')
