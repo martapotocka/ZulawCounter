@@ -34,7 +34,7 @@ class ZulawCounter():
     def read_list_of_acceptd_novels(self, list_file):
         with open(list_file, 'r', encoding='utf-8') as f:
             for line in f:
-                self.list_of_accepted_novels.append(line[:-1].lower())
+                self.list_of_accepted_novels.append(line[:-1].lower().strip())
 
     def create_list_of_cards(self):
         for f in os.listdir(self.current_dir):
